@@ -1,67 +1,53 @@
 package bfs;
 
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Scanner;
 
 public class Problem6603 {
-	static int[] map;
-	static boolean[] visited;
-	static Queue<Position> queue;
 	static int k;
-
+	static int[] map;
+//	static boolean[] visited; 순서가 오름차순으로 되는 특징이어서 방문체크 필요없음!
+	static int count;
+	
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
 		
 		boolean isEnd = false;
+		
 		while(isEnd == false) {
 			k = sc.nextInt();
+			map = new int[k];
 			
 			if(k != 0) {
-				map = new int[k];
-				visited = new boolean[k];
-				queue = new LinkedList<>();
-				
+				// 입력
 				for(int i = 0; i < k; i++) {
-					map[i] = sc.nextInt(); 
+					map[i] = sc.nextInt();
 				}
 				
+				// dfs
 				for(int i = 0; i <= k-6; i++) {
-					Position start = new Position(i, 1);
-					queue.add(start);
-				}
-				visited[0] = true; // 하드코딩...후...
-				
-				while(queue.isEmpty() == false) {
-					Position pos = queue.poll();
-					visited[pos.current] = true;
-					
-					if(pos.count > 6) {
-						// 출력?
-					}
-					
-					for(int i = pos.current; i < k; i++) {
-						if(visited[i] == false) {
-							Position next = new Position(i, pos.count + 1);
-							queue.add(next);
-						}
-					}
+					count = 1; // 카운트 초기
+					dfs(i, map[i] + " ");
 				}
 				
-			} else {
+				System.out.println();
+			}  else {
 				isEnd = true;
-			}			
+			}
 		}
 	}
-
-}
-
-class Position {
-	int current;
-	int count;
 	
-	public Position(int current, int count) {
-		this.current = count;
-		this.count = count;
+	public static void dfs(int current, String output) {
+		if(count == 6) {
+			output += "\n";
+			System.out.print(output);
+		} else {
+			for(int i = current+1; i < k; i++) {
+				++count;
+				dfs(i, output + map[i] + " ");
+			}
+		}
+		
+		--count; // 백트래킹
 	}
+
 }
