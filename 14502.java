@@ -43,7 +43,7 @@ public class Problem14502 {
 				if(map[y][x] == 0) {
 					copyMap(backup, map); // 맵 초기화
 					
-					dfs(y, x, 1);
+					dfs(y, x, 1); // 벽 세우기 시작
 				}
 			}
 		}
@@ -56,10 +56,10 @@ public class Problem14502 {
 		visitedDfs[y][x] = true;
 		map[y][x] = 1; // 벽 세우기
 		
-		if(count == 3) {
+		if(count == 3) { // 벽이 3개 세워졌다면,
 			visitedBfs = new boolean[N][M]; // 초기화, 이 부분을 빼먹었었음
 			copyMap(map, tmp);
-			bfs(tmp); // 세균 퍼지는 로직, BFS
+			bfs(tmp); // 세균 퍼지는 로직 시작, BFS
 			
 			visitedDfs[y][x] = false;
 			map[y][x] = 0;
@@ -83,7 +83,7 @@ public class Problem14502 {
 	}
 	
 	static void bfs(int[][] inputMap) {
-		int count = 0;
+		int count = 0; // 안전구역 칸 수 
 		
 		// 1. 시작지점 큐에 집어넣기
 		for(int y = 0; y < N; y++) {
@@ -115,13 +115,13 @@ public class Problem14502 {
 						
 						inputMap[targetY][targetX] = 2;
 						visitedBfs[targetY][targetX] = true;
-						queue.add(next); // 4. 큐에 너기
+						queue.add(next); // 4. 큐에 넣기
 					}
 				}
 			}
 		}
 		
-		// 세균 감염 종료, 세균 안된 수 체크
+		// 세균 감염 종료, 안전구역 칸 수 체크
 		for(int y = 0; y < N; y++) {
 			for(int x = 0; x < M; x++) {
 				if(inputMap[y][x] == 0) {
@@ -135,7 +135,7 @@ public class Problem14502 {
 		}
 	}
 	
-	// 2차원 배열 복
+	// 2차원 배열 복사
 	static void copyMap(int[][] arr, int[][]copy) {
 		for(int i = 0; i < arr.length; i++) {
 			System.arraycopy(arr[i], 0, copy[i], 0, arr[i].length);
