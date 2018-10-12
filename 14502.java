@@ -11,6 +11,7 @@ public class Problem14502 {
 	static boolean[][] visitedDfs;
 	static boolean[][] visitedBfs;
 	static Queue<Position14502> queue;
+	static int[][] tmp;
 	
 	static int[] dx = {1, -1, 0, 0};
 	static int[] dy = {0, 0, 1, -1};
@@ -26,6 +27,7 @@ public class Problem14502 {
 		backup = new int[N][M];
 		visitedDfs = new boolean[N][M];
 		visitedBfs = new boolean[N][M];
+		tmp = new int[N][M];
 		
 		queue = new LinkedList<>();
 		
@@ -38,7 +40,7 @@ public class Problem14502 {
 		
 		for(int y = 0; y < N; y++) {
 			for(int x = 0; x < M; x++) {
-				if(map[y][x] == 0 && visitedDfs[y][x] == false) {
+				if(map[y][x] == 0) {
 					copyMap(backup, map); // 맵 초기화
 					
 					dfs(y, x, 1);
@@ -55,10 +57,13 @@ public class Problem14502 {
 		map[y][x] = 1; // 벽 세우기
 		
 		if(count == 3) {
-			bfs(map); // 세균 퍼지는 로직, BFS
+			visitedBfs = new boolean[N][M]; // 초기화, 이 부분을 빼먹었었음
+			copyMap(map, tmp);
+			bfs(tmp); // 세균 퍼지는 로직, BFS
 			
 			visitedDfs[y][x] = false;
 			map[y][x] = 0;
+			return;
 		}
 		
 		// 2. 연결된 길 체크, 상하좌우가 아니구나!!!
@@ -77,13 +82,13 @@ public class Problem14502 {
 		map[y][x] = 0;
 	}
 	
-	static void bfs(int[][] map) {
+	static void bfs(int[][] inputMap) {
 		int count = 0;
 		
 		// 1. 시작지점 큐에 집어넣기
 		for(int y = 0; y < N; y++) {
 			for(int x = 0; x < M; x++) {
-				if(map[y][x] == 2 && visitedBfs[y][x] == false) {
+				if(inputMap[y][x] == 2 && visitedBfs[y][x] == false) {
 					Position14502 start = new Position14502(y, x);
 					
 					visitedBfs[y][x] = true;
@@ -105,9 +110,10 @@ public class Problem14502 {
 				int targetX = currentX + dx[i];
 				
 				if(targetY >= 0 && targetY < N && targetX >= 0 && targetX < M) {
-					if(map[targetY][targetX] == 0) {
+					if(inputMap[targetY][targetX] == 0) {
 						Position14502 next = new Position14502(targetY, targetX);
 						
+						inputMap[targetY][targetX] = 2;
 						visitedBfs[targetY][targetX] = true;
 						queue.add(next); // 4. 큐에 너기
 					}
@@ -115,10 +121,10 @@ public class Problem14502 {
 			}
 		}
 		
-		// 세균 감염 종료, 세균 수 체크
+		// 세균 감염 종료, 세균 안된 수 체크
 		for(int y = 0; y < N; y++) {
 			for(int x = 0; x < M; x++) {
-				if(map[y][x] == 0) {
+				if(inputMap[y][x] == 0) {
 					count++;
 				}
 			}
@@ -129,6 +135,7 @@ public class Problem14502 {
 		}
 	}
 	
+	// 2차원 배열 복
 	static void copyMap(int[][] arr, int[][]copy) {
 		for(int i = 0; i < arr.length; i++) {
 			System.arraycopy(arr[i], 0, copy[i], 0, arr[i].length);
